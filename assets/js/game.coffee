@@ -132,10 +132,7 @@ $(document).ready () ->
   # Arrow Button Bindings
   $('body').keydown (event) ->
     console.log "keyCode #{event.keyCode}"
-    curLeftPos = yourPlayer.offset().left
-    curTopPos = yourPlayer.offset().top
-  
-    offset = 50
+
     #left
     if event.keyCode is 37
       console.log "MOVING LEFT"
