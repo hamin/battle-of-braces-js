@@ -1,1 +1,1 @@
-alert("foobar")
+alert "foobar"
