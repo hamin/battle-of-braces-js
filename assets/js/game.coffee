@@ -103,15 +103,14 @@ $(document).ready () ->
   paper = setupRaphael()
 
   # dummy data
-  player1 = new Player
-  player1.save()
+  currentUser = new Player
+  currentUser.save()
 
-  players = new PlayersCollection [player1], silent: false
-  # players.add player1
-  
+  players = new PlayersCollection
   players.on 'add', (player) ->
     new Paddle paper, player
   
+  players.add currentUser
   players.fetch() # GET /players
   
   # Faye Add New PLayer
@@ -140,13 +139,13 @@ $(document).ready () ->
     #left
     if event.keyCode is 37
       console.log "MOVING LEFT"
-      player1.moveLeft()
+      currentUser.moveLeft()
     # right
     if event.keyCode is 39
       console.log "MOVING RIGHT"
-      player1.moveRight()
+      currentUser.moveRight()
   
-    client.publish "/updatePlayer", player1.toJSON()
+    client.publish "/updatePlayer", currentUser.toJSON()
     
 
 
