@@ -33,6 +33,7 @@ PlayersCollection = Backbone.Collection.extend(
     this.reduce ((sum, player) -> sum + player.get('score')), 0
 )
 
+# ----- Views -------
 
 class GoalCircle
   constructor: (@paper, @players) ->
@@ -61,11 +62,21 @@ class GoalCircle
 class Paddle
   constructor: (@paper, @player) ->
     hue = @player.get 'hue'
-    angle = @player.get 'angle'
     @path = @paper.path().attr
       fill: "hsb(#{hue}, 1, 1)"
-      arc: [300, 300, angle, angle + 30, 80, 90]
+      arc: this.getArc(@player)
+    
+    @player.on 'change:angle', this.onAngleChange, this
 
+  getArc: (player) ->
+    angle = @player.get 'angle'
+    [300, 300, angle, angle + 30, 80, 90]
+
+  onAngleChange: (model, newAngle) ->
+    @path.animate
+      arc: this.getArc(model), 500, '>'
+
+# -----------------
 
 setupRaphael = () ->
   paper = Raphael 'holder', 600, 600
@@ -148,6 +159,9 @@ $(document).ready () ->
   paddles = players.map ((player) ->
     new Paddle paper, player
   )
+
+  player1.set 'angle', 150
+  player3.set 'angle', 100
 
 
 
