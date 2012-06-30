@@ -63,7 +63,7 @@ class Paddle
 
   onAngleChange: (model, newAngle) ->
     @path.animate
-      arc: this.getArc(model), 500, '>'
+      arc: this.getArc(model), 500, 'linear'
 
 # -----------------
 
@@ -108,10 +108,11 @@ $(document).ready () ->
 
   players = new PlayersCollection
   players.on 'add', (player) ->
+    console.log 'num players: ', players.length
     new Paddle paper, player
-  
+
   players.add currentUser
-  players.fetch() # GET /players
+  players.fetch add: true # GET /players
   
   # Faye Add New PLayer
   client.subscribe "/new_player", (message) ->

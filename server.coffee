@@ -1,5 +1,5 @@
 express = require 'express'
-_= require 'underscore'
+_ = require 'underscore'
 faye = require 'faye'
 routes = require './routes'
 app = module.exports = express.createServer()
@@ -46,16 +46,15 @@ app.get "/players", (req, res) ->
 
 
 
-registerPlayer = {
-  incoming: (message, callback) ->
-    # if message.subscription == '/start_game'
-    return callback message
-}
-
-
 bayeux = new faye.NodeAdapter mount: '/faye', timeout: 45
 
-# bayeux.addExtension registerPlayer
+bayeux.getClient().subscribe '/updatePlayer', (message) ->
+  console.log players
+  player = playersById[message.id]
+  # merge the attributes in
+  _.extend player, message
+
+
 bayeux.attach app
 
 app.listen 3000, ->
