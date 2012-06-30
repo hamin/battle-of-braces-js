@@ -24,7 +24,17 @@ app.get "/", routes.index
 app.get "/game", routes.game
 
 
+registerPlayer = {
+  incoming: (message, callback) ->
+    if message.subscription == '/start_game'
+      bayeux.getClient().publish '/start_game', {player: 'new'}
+    return callback message
+}
+
+
 bayeux = new faye.NodeAdapter mount: '/faye', timeout: 45
+
+bayeux.addExtension registerPlayer
 bayeux.attach app
 
 app.listen 3000, ->
