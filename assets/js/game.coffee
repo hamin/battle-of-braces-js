@@ -1,6 +1,5 @@
 client = new Faye.Client('/faye')
 
-<<<<<<< HEAD
 client.subscribe "/start_game", (message) ->
   addPlayer('opponent')
 
