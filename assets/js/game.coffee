@@ -39,14 +39,22 @@ class GoalCircle
     @paths = []
 
   draw: () ->
+    numPlayers = @players.length
     totalScore = @players.totalScore()
+    netScore = 0
     @players.each ((player, i) ->
+      score = player.get('score')
+      startAngle = (netScore / totalScore) * 360
+      endAngle = ((netScore + score) / totalScore) * 360
+      color = "hsb(#{i / numPlayers}, 1, 1)"
+
       path = @paper.path().attr
-        stroke: '#ff0'
-        'stroke-width': 14
-        arc: [player.get('score'), totalScore, 100 + (i * 10)]
+        fill: color
+        'stroke-width': 0
+        arc: [300, 300, startAngle, endAngle, 100, 120]
 
       @paths.push path
+      netScore += score
     ), this
 
 
@@ -54,19 +62,27 @@ class GoalCircle
 setupRaphael = () ->
   paper = Raphael 'holder', 600, 600
 
-  paper.customAttributes.arc = (value, total, radius) ->
-    alpha = 360 / total * value
-    a = (90 - alpha) * Math.PI / 180
-    x = 300 + radius * Math.cos(a)
-    y = 300 - radius * Math.sin(a)
-    color = "hsb(".concat(Math.round(radius) / 200, ",", value / total, ", .75)")
-    path = undefined
-    if total is value
-      path = [ [ "M", 300, 300 - radius ], [ "A", radius, radius, 0, 1, 1, 299.99, 300 - radius ] ]
-    else
-      path = [ [ "M", 300, 300 - radius ], [ "A", radius, radius, 0, +(alpha > 180), 1, x, y ] ]
+  # taken from http://stackoverflow.com/a/9330739/358804
+  paper.customAttributes.arc = (centerX, centerY, startAngle, endAngle, innerR, outerR) ->
+    radians = Math.PI / 180
+    largeArc = +(endAngle - startAngle > 180)
+    outerX1 = centerX + outerR * Math.cos((startAngle - 90) * radians)
+    outerY1 = centerY + outerR * Math.sin((startAngle - 90) * radians)
+    outerX2 = centerX + outerR * Math.cos((endAngle - 90) * radians)
+    outerY2 = centerY + outerR * Math.sin((endAngle - 90) * radians)
+    innerX1 = centerX + innerR * Math.cos((endAngle - 90) * radians)
+    innerY1 = centerY + innerR * Math.sin((endAngle - 90) * radians)
+    innerX2 = centerX + innerR * Math.cos((startAngle - 90) * radians)
+    innerY2 = centerY + innerR * Math.sin((startAngle - 90) * radians)
+
+    path = [
+      [ "M", outerX1, outerY1 ],
+      [ "A", outerR, outerR, 0, largeArc, 1, outerX2, outerY2 ],
+      [ "L", innerX1, innerY1 ],
+      [ "A", innerR, innerR, 0, largeArc, 0, innerX2, innerY2 ],
+      [ "z" ] ]
+
     path: path
-    stroke: color
 
   return paper
 
@@ -110,12 +126,11 @@ $(document).ready () ->
   
   paper = setupRaphael()
 
-  player1 = new Player
-  player1.set 'score', 6
-  player2 = new Player
-  player2.set 'score', 2
+  player1 = new Player(score: 2)
+  player2 = new Player(score: 6)
+  player3 = new Player(score: 4)
 
-  players = new PlayersCollection [player1, player2]
+  players = new PlayersCollection [player1, player2, player3]
   console.log players.totalScore()
 
   goalCircle = new GoalCircle paper, players
