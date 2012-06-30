@@ -23,7 +23,7 @@ updateDivPosition = (divName,newPosition) ->
 
 
 Player = Backbone.Model.extend(
-  # attrs: score
+  # attrs: hue, score
 )
 
 PlayersCollection = Backbone.Collection.extend(
@@ -46,17 +46,16 @@ class GoalCircle
       score = player.get('score')
       startAngle = (netScore / totalScore) * 360
       endAngle = ((netScore + score) / totalScore) * 360
-      color = "hsb(#{i / numPlayers}, 1, 1)"
+      hue = player.get('hue')
 
       path = @paper.path().attr
-        fill: color
+        fill: "hsb(#{hue}, 0.6, 1)"
         'stroke-width': 0
         arc: [300, 300, startAngle, endAngle, 100, 120]
 
       @paths.push path
       netScore += score
     ), this
-
 
 
 setupRaphael = () ->
@@ -126,9 +125,9 @@ $(document).ready () ->
   
   paper = setupRaphael()
 
-  player1 = new Player(score: 2)
-  player2 = new Player(score: 6)
-  player3 = new Player(score: 4)
+  player1 = new Player(hue: '0.33', score: 2)
+  player2 = new Player(hue: '0.66', score: 6)
+  player3 = new Player(hue: '1', score: 4)
 
   players = new PlayersCollection [player1, player2, player3]
   console.log players.totalScore()
