@@ -50,13 +50,13 @@ class GoalCircle
 
   draw: () ->
     numPlayers = @players.length
-    totalScore = @players.totalScore()
+    arcSize = 360 / numPlayers
     netScore = 0
     @players.each ((player, i) ->
-      score = player.get 'score'
-      startAngle = (netScore / totalScore) * 360
-      endAngle = ((netScore + score) / totalScore) * 360
       hue = player.get 'hue'
+      score = player.get 'score'
+      startAngle = i * arcSize
+      endAngle = startAngle + arcSize
 
       path = @paper.path().attr
         fill: "hsb(#{hue}, 0.6, 1)"
