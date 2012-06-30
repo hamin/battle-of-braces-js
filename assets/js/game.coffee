@@ -54,17 +54,17 @@ class GoalCircle
 setupRaphael = () ->
   paper = Raphael 'holder', 600, 600
 
-  paper.customAttributes.arc = (value, total, R) ->
+  paper.customAttributes.arc = (value, total, radius) ->
     alpha = 360 / total * value
     a = (90 - alpha) * Math.PI / 180
-    x = 300 + R * Math.cos(a)
-    y = 300 - R * Math.sin(a)
-    color = "hsb(".concat(Math.round(R) / 200, ",", value / total, ", .75)")
+    x = 300 + radius * Math.cos(a)
+    y = 300 - radius * Math.sin(a)
+    color = "hsb(".concat(Math.round(radius) / 200, ",", value / total, ", .75)")
     path = undefined
     if total is value
-      path = [ [ "M", 300, 300 - R ], [ "A", R, R, 0, 1, 1, 299.99, 300 - R ] ]
+      path = [ [ "M", 300, 300 - radius ], [ "A", radius, radius, 0, 1, 1, 299.99, 300 - radius ] ]
     else
-      path = [ [ "M", 300, 300 - R ], [ "A", R, R, 0, +(alpha > 180), 1, x, y ] ]
+      path = [ [ "M", 300, 300 - radius ], [ "A", radius, radius, 0, +(alpha > 180), 1, x, y ] ]
     path: path
     stroke: color
 
