@@ -30,11 +30,17 @@ class PlayerCollection
     @players.push player
 
   totalScore: () ->
-    _.reduce @players, ((sum, player) -> sum + player.score), 0
+    _.reduce @players, ((sum, player) -> sum + player.getScore()), 0
 
 
 class Player
-  score: 0
+  constructor: (score) ->
+    @score = score || 0
+
+  getScore: () -> @score
+
+  setScore: (newScore) ->
+    @score = newScore
 
 
 setupRaphael = () ->
@@ -101,6 +107,8 @@ $(document).ready () ->
     arc: [40, 60, 100]
 
   players = new PlayerCollection
-  player = new Player
-  players.add player
+  player1 = new Player
+  player2 = new Player 2
+  players.add player1
+  players.add player2
   console.log players.totalScore()
