@@ -19,28 +19,19 @@ updateDivPosition = (divName,newPosition) ->
   $("##{divName}").offset left: newPosition
 
 
-class PlayerCollection
-  constructor: () ->
-    @players = []
 
-  getAll: () ->
-    return @players
 
-  add: (player) ->
-    @players.push player
+
+Player = Backbone.Model.extend(
+  # attrs: score
+)
+
+PlayersCollection = Backbone.Collection.extend(
+  model: Player
 
   totalScore: () ->
-    _.reduce @players, ((sum, player) -> sum + player.getScore()), 0
-
-
-class Player
-  constructor: (score) ->
-    @score = score || 0
-
-  getScore: () -> @score
-
-  setScore: (newScore) ->
-    @score = newScore
+    this.reduce ((sum, player) -> sum + player.get('score')), 0
+)
 
 
 setupRaphael = () ->
@@ -61,6 +52,7 @@ setupRaphael = () ->
     stroke: color
 
   return paper
+
 
 $(document).ready () ->
   # Add YOUR Player
@@ -106,9 +98,10 @@ $(document).ready () ->
     'stroke-width': 14
     arc: [40, 60, 100]
 
-  players = new PlayerCollection
   player1 = new Player
-  player2 = new Player 2
-  players.add player1
-  players.add player2
+  player1.set 'score', 6
+  player2 = new Player
+  player2.set 'score', 2
+
+  players = new PlayersCollection [player1, player2]
   console.log players.totalScore()
