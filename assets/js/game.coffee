@@ -24,6 +24,7 @@ $(document).ready () ->
 	  # right
 	  if event.keyCode is 39 	
       updateDivPosition "me", curLeftPos + offset
+    # Spacebar  
     if event.keyCode is 16
       shoot {x: curLeftPos+50, y: curTopPos-15}, false
       oppY = $('.opponent').offset().top + $('.opponent').height()
