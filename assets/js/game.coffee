@@ -11,19 +11,16 @@ window.onload = ->
     color = "hsb(#{Math.round(R) / 200}, #{value / total}, .75)"
     if init
       hand.animate
-        arc: [ value, total, R ],
-        900, ">"
+        arc: [ value, total, R ], 900, ">"
     else
       if not value or value is total
         value = total
         hand.animate
-          arc: [ value, total, R ],
-          750, "bounce", ->
+          arc: [ value, total, R ], 750, "bounce", ->
           hand.attr arc: [ 0, total, R ]
       else
         hand.animate
-          arc: [ value, total, R ]
-        , 750, "elastic"
+          arc: [ value, total, R ], 750, "elastic"
     html[id].innerHTML = (if value < 10 then "0" else "") + value
     html[id].style.color = Raphael.getRGB(color).hex
   drawMarks = (R, total) ->
