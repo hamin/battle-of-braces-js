@@ -31,8 +31,8 @@ updateDivPosition = (divName,newPosition) ->
 
 
 Player = Backbone.Model.extend(
-  # attrs: score
   urlRoot: '/players'
+  # attrs: angle, hue, score
 )
 
 PlayersCollection = Backbone.Collection.extend(
@@ -42,6 +42,7 @@ PlayersCollection = Backbone.Collection.extend(
     this.reduce ((sum, player) -> sum + player.get('score')), 0
 )
 
+# ----- Views -------
 
 class GoalCircle
   constructor: (@paper, @players) ->
@@ -52,13 +53,13 @@ class GoalCircle
     totalScore = @players.totalScore()
     netScore = 0
     @players.each ((player, i) ->
-      score = player.get('score')
+      score = player.get 'score'
       startAngle = (netScore / totalScore) * 360
       endAngle = ((netScore + score) / totalScore) * 360
-      color = "hsb(#{i / numPlayers}, 1, 1)"
+      hue = player.get 'hue'
 
       path = @paper.path().attr
-        fill: color
+        fill: "hsb(#{hue}, 0.6, 1)"
         'stroke-width': 0
         arc: [300, 300, startAngle, endAngle, 100, 120]
 
@@ -67,6 +68,24 @@ class GoalCircle
     ), this
 
 
+class Paddle
+  constructor: (@paper, @player) ->
+    hue = @player.get 'hue'
+    @path = @paper.path().attr
+      fill: "hsb(#{hue}, 1, 1)"
+      arc: this.getArc(@player)
+    
+    @player.on 'change:angle', this.onAngleChange, this
+
+  getArc: (player) ->
+    angle = @player.get 'angle'
+    [300, 300, angle, angle + 30, 80, 90]
+
+  onAngleChange: (model, newAngle) ->
+    @path.animate
+      arc: this.getArc(model), 500, '>'
+
+# -----------------
 
 setupRaphael = () ->
   paper = Raphael 'holder', 600, 600
@@ -135,9 +154,10 @@ $(document).ready () ->
   
   paper = setupRaphael()
 
-  player1 = new Player(score: 2)
-  player2 = new Player(score: 6)
-  player3 = new Player(score: 4)
+  # dummy data
+  player1 = new Player(angle: 10, hue: '0.33', score: 2)
+  player2 = new Player(angle: 60, hue: '0.66', score: 6)
+  player3 = new Player(angle: 200, hue: '1', score: 4)
 
   players = new PlayersCollection [player1, player2, player3]
   console.log players.totalScore()
@@ -146,6 +166,13 @@ $(document).ready () ->
   
   goalCircle = new GoalCircle paper, players
   goalCircle.draw()
+
+  paddles = players.map ((player) ->
+    new Paddle paper, player
+  )
+
+  player1.set 'angle', 150
+  player3.set 'angle', 100
 
 
 
