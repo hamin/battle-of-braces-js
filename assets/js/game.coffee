@@ -1,5 +1,6 @@
 client = new Faye.Client('/faye')
 
+<<<<<<< HEAD
 client.subscribe "/start_game", (message) ->
   addPlayer('opponent')
 
@@ -17,7 +18,26 @@ updateDivPosition = (divName,newPosition) ->
   
   console.log "newPosition = #{newPosition}"
   $("##{divName}").offset left: newPosition
-  
+
+setupRaphael = () ->
+  paper = Raphael 'holder', 600, 600
+
+  paper.customAttributes.arc = (value, total, R) ->
+    alpha = 360 / total * value
+    a = (90 - alpha) * Math.PI / 180
+    x = 300 + R * Math.cos(a)
+    y = 300 - R * Math.sin(a)
+    color = "hsb(".concat(Math.round(R) / 200, ",", value / total, ", .75)")
+    path = undefined
+    if total is value
+      path = [ [ "M", 300, 300 - R ], [ "A", R, R, 0, 1, 1, 299.99, 300 - R ] ]
+    else
+      path = [ [ "M", 300, 300 - R ], [ "A", R, R, 0, +(alpha > 180), 1, x, y ] ]
+    path: path
+    stroke: color
+
+  return paper
+
 $(document).ready () ->
   # Add YOUR Player
   addPlayer('me')
@@ -55,3 +75,9 @@ $(document).ready () ->
 
     client.publish "/opponentPos", { curLeftPos: yourPlayer.offset().left, playerId: yourPlayer.attr('id') }    
   
+  paper = setupRaphael()
+
+  paper.path().attr
+    stroke: '#ff0'
+    'stroke-width': 14
+    arc: [40, 60, 100]
