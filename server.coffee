@@ -34,10 +34,15 @@ app.post '/players', (req, res) ->
   playersById[id] = player
   players.push player
   
-  # bayeux.getClient().publish '/new_player', player
+  # Let other PPl know via Faye
+  bayeux.getClient().publish '/new_player', player
+  
   res.send(
     player
   )
+  
+app.get "/players", (req, res) ->
+  res.send players  
 
 
 

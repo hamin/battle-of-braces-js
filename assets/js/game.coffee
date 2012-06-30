@@ -32,11 +32,15 @@ updateDivPosition = (divName,newPosition) ->
 
 Player = Backbone.Model.extend(
   urlRoot: '/players'
-  # attrs: angle, hue, score
+  defaults:
+    angle: 0
+    hue: 0.5
+    score: 0
 )
 
 PlayersCollection = Backbone.Collection.extend(
   model: Player
+  url: '/players'
 
   totalScore: () ->
     this.reduce ((sum, player) -> sum + player.get('score')), 0
@@ -57,6 +61,7 @@ class GoalCircle
       score = player.get 'score'
       startAngle = i * arcSize
       endAngle = startAngle + arcSize
+      endAngle = 359 if endAngle is 360
 
       path = @paper.path().attr
         fill: "hsb(#{hue}, 0.6, 1)"
@@ -129,6 +134,7 @@ $(document).ready () ->
   # client.subscribe "/fire", (message) ->
   #   if message.oppClientId isnt clientId
   #     shoot {x: message.x, y: message.y}, true
+    
       
   
   # Arrow Button Bindings
@@ -155,24 +161,33 @@ $(document).ready () ->
   paper = setupRaphael()
 
   # dummy data
-  player1 = new Player(angle: 10, hue: '0.33', score: 2)
-  player2 = new Player(angle: 60, hue: '0.66', score: 6)
-  player3 = new Player(angle: 200, hue: '1', score: 4)
-
-  players = new PlayersCollection [player1, player2, player3]
-  console.log players.totalScore()
-  
+  player1 = new Player
   player1.save()
+
+  players = new PlayersCollection [player1], silent: false
+  # players.add player1
+  
+  players.on 'add', (player) ->
+    new Paddle paper, player
+  
+  players.fetch() # GET /players
+  
+  # Faye Add New PLayer
+  client.subscribe "/new_player", (message) ->
+    player = new Player(message)
+    players.add player
+    
+  console.log players.totalScore()
   
   goalCircle = new GoalCircle paper, players
   goalCircle.draw()
 
-  paddles = players.map ((player) ->
-    new Paddle paper, player
-  )
+  # paddles = players.map ((player) ->
+  #   new Paddle paper, player
+  # )
 
-  player1.set 'angle', 150
-  player3.set 'angle', 100
+  # player1.set 'angle', 150
+  # player3.set 'angle', 100
 
 
 
