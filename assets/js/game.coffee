@@ -4,10 +4,10 @@ GOAL_CIRCLE_RADIUS = 100
 GOAL_CIRCLE_WIDTH = 10
 
 Player = Backbone.Model.extend(
+  # attrs: id, angle, hue, score
   urlRoot: '/players'
   defaults:
     angle: 0
-    hue: 0.5
     score: 0
   moveLeft: () ->
     @set('angle', @get('angle') + 20 )
@@ -107,8 +107,7 @@ $(document).ready () ->
   
   paper = setupRaphael()
 
-  # dummy data
-  currentUser = new Player
+  currentUser = new Player hue: Math.random()
   currentUser.save()
 
   players = new PlayersCollection
@@ -131,8 +130,12 @@ $(document).ready () ->
   
   # Faye Sub - Update PLayer
   client.subscribe '/updatePlayer', (message) ->
-    opponent = players.get(message.id)
-    opponent.set(message)
+    userId = message.id
+    opponent = players.get(userId)
+    if opponent
+      opponent.set message
+    else
+      console.warn "player not found: #{userId}"
     
     
   # Arrow Button Bindings
