@@ -36,6 +36,10 @@ Player = Backbone.Model.extend(
     angle: 0
     hue: 0.5
     score: 0
+  moveLeft: () ->
+    @set('angle', @get('angle') + 20 )
+  moveRight: () ->
+    @set('angle', @get('angle') - 20 )    
 )
 
 PlayersCollection = Backbone.Collection.extend(
@@ -137,26 +141,26 @@ $(document).ready () ->
     
       
   
-  # Arrow Button Bindings
-  $('body').keydown (event) ->
-    console.log "keyCode #{event.keyCode}"
-    curLeftPos = yourPlayer.offset().left
-    curTopPos = yourPlayer.offset().top
-
-    offset = 50
-    #left
-    if event.keyCode is 37
-      updateDivPosition yourPlayer.attr('id'), curLeftPos - offset
-    # right
-    if event.keyCode is 39
-      updateDivPosition yourPlayer.attr('id'), curLeftPos + offset
-    # Spacebar  
-    if event.keyCode is 16
-      shoot {x: curLeftPos+50, y: curTopPos-15}, false
-      oppY = $('.opponent').offset().top + $('.opponent').height()
-      client.publish '/fire', x: curLeftPos+50, y: oppY, oppClientId: clientId
-
-    client.publish "/opponentPos", { curLeftPos: yourPlayer.offset().left, playerId: yourPlayer.attr('id') }    
+  # # Arrow Button Bindings
+  # $('body').keydown (event) ->
+  #   console.log "keyCode #{event.keyCode}"
+  #   curLeftPos = yourPlayer.offset().left
+  #   curTopPos = yourPlayer.offset().top
+  # 
+  #   offset = 50
+  #   #left
+  #   if event.keyCode is 37
+  #     updateDivPosition yourPlayer.attr('id'), curLeftPos - offset
+  #   # right
+  #   if event.keyCode is 39
+  #     updateDivPosition yourPlayer.attr('id'), curLeftPos + offset
+  #   # Spacebar  
+  #   if event.keyCode is 16
+  #     shoot {x: curLeftPos+50, y: curTopPos-15}, false
+  #     oppY = $('.opponent').offset().top + $('.opponent').height()
+  #     client.publish '/fire', x: curLeftPos+50, y: oppY, oppClientId: clientId
+  # 
+  #   client.publish "/opponentPos", { curLeftPos: yourPlayer.offset().left, playerId: yourPlayer.attr('id') }    
   
   paper = setupRaphael()
 
@@ -181,13 +185,32 @@ $(document).ready () ->
   
   goalCircle = new GoalCircle paper, players
   goalCircle.draw()
-
-  # paddles = players.map ((player) ->
-  #   new Paddle paper, player
-  # )
-
-  # player1.set 'angle', 150
-  # player3.set 'angle', 100
+  
+  # Faye Sub - Update PLayer
+  client.subscribe '/updatePlayer', (message) ->
+    opponent = players.get(message.id)
+    opponent.set(message)
+    
+    
+  # Arrow Button Bindings
+  $('body').keydown (event) ->
+    console.log "keyCode #{event.keyCode}"
+    curLeftPos = yourPlayer.offset().left
+    curTopPos = yourPlayer.offset().top
+  
+    offset = 50
+    #left
+    if event.keyCode is 37
+      # updateDivPosition yourPlayer.attr('id'), curLeftPos - offset
+      console.log "MOVING LEFT"
+      player1.moveLeft()
+    # right
+    if event.keyCode is 39
+      console.log "MOVING RIGHT"
+      player1.moveRight()
+  
+    client.publish "/updatePlayer", player1.toJSON()
+    
 
 
 
