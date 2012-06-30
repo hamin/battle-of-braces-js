@@ -1,5 +1,7 @@
 client = new Faye.Client('/faye')
 
+GOAL_CIRCLE_RADIUS = 100
+GOAL_CIRCLE_WIDTH = 10
 
 Player = Backbone.Model.extend(
   urlRoot: '/players'
@@ -10,7 +12,7 @@ Player = Backbone.Model.extend(
   moveLeft: () ->
     @set('angle', @get('angle') + 20 )
   moveRight: () ->
-    @set('angle', @get('angle') - 20 )    
+    @set('angle', @get('angle') - 20 )   
 )
 
 PlayersCollection = Backbone.Collection.extend(
@@ -41,12 +43,14 @@ class GoalCircle
       path = @paper.path().attr
         fill: "hsb(#{hue}, 0.6, 1)"
         'stroke-width': 0
-        arc: [300, 300, startAngle, endAngle, 100, 120]
+        arc: [GOAL_CIRCLE_RADIUS, GOAL_CIRCLE_RADIUS, startAngle, endAngle, GOAL_CIRCLE_RADIUS - GOAL_CIRCLE_WIDTH, GOAL_CIRCLE_RADIUS]
 
       @paths.push path
       netScore += score
     ), this
 
+
+PADDLE_RADIUS = GOAL_CIRCLE_RADIUS - GOAL_CIRCLE_WIDTH - 10
 
 class Paddle
   constructor: (@paper, @player) ->
@@ -59,7 +63,7 @@ class Paddle
 
   getArc: (player) ->
     angle = @player.get 'angle'
-    [300, 300, angle, angle + 30, 80, 90]
+    [GOAL_CIRCLE_RADIUS, GOAL_CIRCLE_RADIUS, angle, angle + 30, PADDLE_RADIUS - 10, PADDLE_RADIUS]
 
   onAngleChange: (model, newAngle) ->
     @path.animate
@@ -68,7 +72,8 @@ class Paddle
 # -----------------
 
 setupRaphael = () ->
-  paper = Raphael 'holder', 600, 600
+  paperSize = GOAL_CIRCLE_RADIUS * 2
+  paper = Raphael 'holder', paperSize, paperSize
 
   # taken from http://stackoverflow.com/a/9330739/358804
   paper.customAttributes.arc = (centerX, centerY, startAngle, endAngle, innerR, outerR) ->
