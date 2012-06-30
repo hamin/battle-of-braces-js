@@ -1,6 +1,6 @@
 client = new Faye.Client('/faye')
 
-GOAL_CIRCLE_RADIUS = 100
+GOAL_CIRCLE_RADIUS = 265
 GOAL_CIRCLE_WIDTH = 10
 
 Player = Backbone.Model.extend(
@@ -152,7 +152,21 @@ $(document).ready () ->
       currentUser.moveRight()
   
     client.publish "/updatePlayer", currentUser.toJSON()
-    
+  
+  
+  
+  
+  # bouncyBall = paper.circle(GOAL_CIRCLE_RADIUS, GOAL_CIRCLE_RADIUS, 10).attr("gradient", "r#293df7-#1e2dbd")
+  # bouncyBall.animate { cy: (GOAL_CIRCLE_RADIUS * 2) - GOAL_CIRCLE_WIDTH }, 500, '>'
+  # 
+  # bouncyBall.onAnimation () ->
+  #   collidingElems = paper.getElementsByPoint( bouncyBall.attr().cx, bouncyBall.attr().cy )
+  #   console.log "THESE ARE COLLIDING ELEMENTS"
+  #   console.log collidingElems
+  #   if collidingElems.length > 0 and (collidingElems[0] isnt bouncyBall)
+  #     hitObject = collidingElems[0]
+  #     
+  #     bouncyBall.animate { cy: hitObject.attr().cy }, 500, '>'
 
 
 

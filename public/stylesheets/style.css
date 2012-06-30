@@ -6,3 +6,13 @@ body {
 a {
   color: #00B7FF;
 }
+
+#container {
+	position:relative;
+}
+
+#holder {
+	position: absolute;
+	left:-5px;
+	top:0;
+}
