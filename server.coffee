@@ -1,7 +1,12 @@
 express = require 'express'
+_= require 'underscore'
 faye = require 'faye'
 routes = require './routes'
 app = module.exports = express.createServer()
+
+playersById = {}
+players = []
+
 app.configure ->
   app.set "views", __dirname + "/views"
   app.set "view engine", "ejs"
@@ -23,18 +28,29 @@ app.configure "production", ->
 app.get "/", routes.index
 app.get "/game", routes.game
 
+app.post '/players', (req, res) ->
+  id = players.length + 1
+  player = {id: id}
+  playersById[id] = player
+  players.push player
+  
+  # bayeux.getClient().publish '/new_player', player
+  res.send(
+    player
+  )
+
+
 
 registerPlayer = {
   incoming: (message, callback) ->
-    if message.subscription == '/start_game'
-      bayeux.getClient().publish '/start_game', {player: 'new'}
+    # if message.subscription == '/start_game'
     return callback message
 }
 
 
 bayeux = new faye.NodeAdapter mount: '/faye', timeout: 45
 
-bayeux.addExtension registerPlayer
+# bayeux.addExtension registerPlayer
 bayeux.attach app
 
 app.listen 3000, ->

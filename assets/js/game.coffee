@@ -1,15 +1,23 @@
 client = new Faye.Client('/faye')
 
-client.subscribe "/start_game", (message) ->
-  addPlayer('opponent')
-
-
-addPlayer = (playerType) ->
+drawPlayer = (playerType) ->
   playerId = $('#players').children().size() + 1
   if playerType is 'me'
     $("<div id='op-#{playerId}' class='me player'>THIS IS ME #{playerId}</div>").appendTo('#players')
   else
-    $("<div id='op-#{playerId}' class='opponent player'>Opponent #{playerId}</div>").appendTo('#players');  	
+    $("<div id='op-#{playerId}' class='opponent player'>Opponent #{playerId}</div>").appendTo('#players')
+      
+drawPlayers = (players, yourPlayerId) ->
+  for player in players
+    if player.clientId is yourPlayerId
+      $("<div id='#{player.clientId}' class='me player'>THIS IS ME #{player.clientId}</div>").appendTo('#players')
+    else
+      $("<div id='#{player.clientId}' class='opponent player'>Opponent #{player.clientId}</div>").appendTo('#players')
+        
+# client.subscribe "/start_game", (message) ->
+#   # addPlayer('opponent')
+#   console.log "IT CAME TO CLIENT SUBSCRIBE CALLBACK!!!"
+#   drawPlayers(message.players, message.clientId)        
     
 updateDivPosition = (divName,newPosition) -> 
   newPosition = Math.max 13, newPosition
@@ -24,6 +32,7 @@ updateDivPosition = (divName,newPosition) ->
 
 Player = Backbone.Model.extend(
   # attrs: score
+  urlRoot: '/players'
 )
 
 PlayersCollection = Backbone.Collection.extend(
@@ -89,18 +98,18 @@ setupRaphael = () ->
 
 $(document).ready () ->
   # Add YOUR Player
-  addPlayer('me')
+  # addPlayer('me')
   yourPlayer = $('.me')
   
   # Faye Sub - Opponent Position
-  client.subscribe "/opponentPos", (message) ->
-    console.log "Opponent Moved!"
-    updateDivPosition message.playerId, message.curLeftPos
-  
-  # Faye Sub - Fire
-  client.subscribe "/fire", (message) ->
-    if message.oppClientId isnt clientId
-      shoot {x: message.x, y: message.y}, true
+  # client.subscribe "/opponentPos", (message) ->
+  #   console.log "Opponent Moved!"
+  #   updateDivPosition message.playerId, message.curLeftPos
+  # 
+  # # Faye Sub - Fire
+  # client.subscribe "/fire", (message) ->
+  #   if message.oppClientId isnt clientId
+  #     shoot {x: message.x, y: message.y}, true
       
   
   # Arrow Button Bindings
@@ -132,7 +141,9 @@ $(document).ready () ->
 
   players = new PlayersCollection [player1, player2, player3]
   console.log players.totalScore()
-
+  
+  player1.save()
+  
   goalCircle = new GoalCircle paper, players
   goalCircle.draw()
 
