@@ -1,5 +1,12 @@
 client = new Faye.Client('/faye')
 
+updateDivPosition = (divName,newPosition) -> 
+  newPosition = Math.max 13, newPosition
+  newPosition = Math.min 600, newPosition
+  
+  console.log "newPosition = #{newPosition}"
+  $(".#{divName}").offset left: newPosition
+  
 $(document).ready () ->
   # Faye Sub - Opponent Position
   client.subscribe "/opponentPos", (message) ->
