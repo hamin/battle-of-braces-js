@@ -34,6 +34,23 @@ PlayersCollection = Backbone.Collection.extend(
 )
 
 
+class GoalCircle
+  constructor: (@paper, @players) ->
+    @paths = []
+
+  draw: () ->
+    totalScore = @players.totalScore()
+    @players.each ((player, i) ->
+      path = @paper.path().attr
+        stroke: '#ff0'
+        'stroke-width': 14
+        arc: [player.get('score'), totalScore, 100 + (i * 10)]
+
+      @paths.push path
+    ), this
+
+
+
 setupRaphael = () ->
   paper = Raphael 'holder', 600, 600
 
@@ -93,11 +110,6 @@ $(document).ready () ->
   
   paper = setupRaphael()
 
-  paper.path().attr
-    stroke: '#ff0'
-    'stroke-width': 14
-    arc: [40, 60, 100]
-
   player1 = new Player
   player1.set 'score', 6
   player2 = new Player
@@ -105,3 +117,18 @@ $(document).ready () ->
 
   players = new PlayersCollection [player1, player2]
   console.log players.totalScore()
+
+  goalCircle = new GoalCircle paper, players
+  goalCircle.draw()
+
+
+
+
+
+
+
+
+
+
+
+
