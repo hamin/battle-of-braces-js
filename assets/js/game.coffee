@@ -18,6 +18,25 @@ updateDivPosition = (divName,newPosition) ->
   console.log "newPosition = #{newPosition}"
   $("##{divName}").offset left: newPosition
 
+
+class PlayerCollection
+  constructor: () ->
+    @players = []
+
+  getAll: () ->
+    return @players
+
+  add: (player) ->
+    @players.push player
+
+  totalScore: () ->
+    _.reduce @players, ((sum, player) -> sum + player.score), 0
+
+
+class Player
+  score: 0
+
+
 setupRaphael = () ->
   paper = Raphael 'holder', 600, 600
 
@@ -80,3 +99,8 @@ $(document).ready () ->
     stroke: '#ff0'
     'stroke-width': 14
     arc: [40, 60, 100]
+
+  players = new PlayerCollection
+  player = new Player
+  players.add player
+  console.log players.totalScore()
