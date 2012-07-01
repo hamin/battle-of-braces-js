@@ -1,5 +1,4 @@
 // http://rectangleworld.com/blog/archives/358
-
 window.addEventListener("load", windowLoadHandler, false);
 
 //for debug messages
@@ -64,7 +63,8 @@ function canvasApp() {
 	
 	function init() {
 		
-		numParticles = 50;
+		// numParticles = 50;
+		numParticles = 1
 		
 		particleColor = "#FFFFFF";
 		haloEdgeColor = "rgba(255,200,50,0.4)";
