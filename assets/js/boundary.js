@@ -80,9 +80,12 @@ function canvasApp() {
 		boundaryRad = 0.5*Math.min(displayWidth,displayHeight) - particleRad - 1;
 		boundaryRadSquare = boundaryRad*boundaryRad;
 		
-		initVelMax = 3.5;
-		maxVelComp = 3.5;
+		// initVelMax = 3.5;
+		// maxVelComp = 3.5;
+		initVelMax = 6.5;
+		maxVelComp = 6.5;
 		randAccel = 0.2;
+		
 				
 		particleList = {};
 		createParticles();
