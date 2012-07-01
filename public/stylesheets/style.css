@@ -1,3 +1,7 @@
+html {
+  background-color: black;
+}
+
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
@@ -13,6 +17,6 @@ a {
 
 #holder {
 	position: absolute;
-	left:-5px;
-	top:0;
+	left: -5px;
+	top: -5px;
 }
