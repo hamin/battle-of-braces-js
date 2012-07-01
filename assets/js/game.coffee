@@ -27,7 +27,11 @@ PlayersCollection = Backbone.Collection.extend(
 
 class GoalCircle
   constructor: (@paper, @players) ->
-    @paths = []
+    @playersWithGoals = []
+    @players.on 'add', this.updatePaths, this
+
+  getArc: (startAngle, endAngle) ->
+    [GOAL_CIRCLE_RADIUS, GOAL_CIRCLE_RADIUS, startAngle, endAngle, GOAL_CIRCLE_RADIUS - GOAL_CIRCLE_WIDTH, GOAL_CIRCLE_RADIUS]
 
   draw: () ->
     numPlayers = @players.length
@@ -44,16 +48,27 @@ class GoalCircle
       path = @paper.path().attr
         fill: "hsb(#{hue}, 0.6, 1)"
         'stroke-width': 0
-        arc: [GOAL_CIRCLE_RADIUS, GOAL_CIRCLE_RADIUS, startAngle, endAngle, GOAL_CIRCLE_RADIUS - GOAL_CIRCLE_WIDTH, GOAL_CIRCLE_RADIUS]
+        arc: @getArc(startAngle, endAngle)
 
       path2 = @paper.path().attr
         fill: "hsba(#{hue}, 1, 1, 0.1)"
         'stroke-width': 0
         arc: [GOAL_CIRCLE_RADIUS, GOAL_CIRCLE_RADIUS, startAngle, endAngle, fakeGoalRad - 20, fakeGoalRad]  
 
-      @paths.push path
+      playerWithGoals =
+        player: player
+        goal: path
+        fakeGoal: path2
+
+      @playersWithGoals.push playerWithGoals
       netScore += score
     ), this
+
+  updatePaths: () ->
+    for playerWithPath in playersWithPaths
+      path = playerWithPath.path
+      path.attrs
+
 
 
 PADDLE_RADIUS = GOAL_CIRCLE_RADIUS - GOAL_CIRCLE_WIDTH - 10
