@@ -33,6 +33,7 @@ class GoalCircle
     numPlayers = @players.length
     arcSize = 360 / numPlayers
     netScore = 0
+    fakeGoalRad = GOAL_CIRCLE_RADIUS - GOAL_CIRCLE_WIDTH
     @players.each ((player, i) ->
       hue = player.get 'hue'
       score = player.get 'score'
@@ -44,6 +45,11 @@ class GoalCircle
         fill: "hsb(#{hue}, 0.6, 1)"
         'stroke-width': 0
         arc: [GOAL_CIRCLE_RADIUS, GOAL_CIRCLE_RADIUS, startAngle, endAngle, GOAL_CIRCLE_RADIUS - GOAL_CIRCLE_WIDTH, GOAL_CIRCLE_RADIUS]
+
+      path2 = @paper.path().attr
+        fill: "hsba(#{hue}, 1, 1, 0.1)"
+        'stroke-width': 0
+        arc: [GOAL_CIRCLE_RADIUS, GOAL_CIRCLE_RADIUS, startAngle, endAngle, fakeGoalRad - 20, fakeGoalRad]  
 
       @paths.push path
       netScore += score
@@ -73,7 +79,7 @@ class Paddle
 
 setupRaphael = () ->
   paperSize = GOAL_CIRCLE_RADIUS * 2
-  paper = Raphael 'holder', paperSize, paperSize
+  window.paper = Raphael 'holder', paperSize, paperSize
 
   # taken from http://stackoverflow.com/a/9330739/358804
   paper.customAttributes.arc = (centerX, centerY, startAngle, endAngle, innerR, outerR) ->

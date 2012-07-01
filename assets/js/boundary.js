@@ -206,6 +206,13 @@ function canvasApp() {
 			radSquare= p.x*p.x + p.y*p.y;
 			if (radSquare > boundaryRadSquare) {
 				
+				// Fake Goal Detection
+				var collidingElems = paper.getElementsByPoint( p.x, p.y );
+				
+				if (collidingElems.length > 0){
+					// alert('COLLID');
+				}
+				
 				//find intersection point with circle. simple method: midpoint
 				exitX = (lastX + p.x)/2;
 				exitY = (lastY + p.y)/2;
