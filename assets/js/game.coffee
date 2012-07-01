@@ -62,13 +62,13 @@ class GoalCircle
     ), this
 
   onPlayerAdded: () ->
-    for playerWithGoals in @playersWithGoals
-      playerWithGoals.goal.remove()
-      delete playerWithGoals.goal
-      playerWithGoals.fakeGoal.remove()
-      delete playerWithGoals.fakeGoal
+    # for playerWithGoals in @playersWithGoals
+    #   playerWithGoals.goal.remove()
+    #   delete playerWithGoals.goal
+    #   playerWithGoals.fakeGoal.remove()
+    #   delete playerWithGoals.fakeGoal
 
-    @playersWithGoals = []
+    # @playersWithGoals = []
     @draw()
 
 
